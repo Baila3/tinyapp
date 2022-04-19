@@ -61,11 +61,23 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.post("/urls/:shortURL/delete",(req, res) => {
-// const shortURL = req.params.shortURL
+const shortURL = req.params.shortURL
 // console.log(req.params.shortURL)
 // console.log(urlDatabase[shortURL])
 delete urlDatabase[shortURL]
 res.redirect(`/urls`) 
+})
+
+app.get("/urls/:id/edit", (req,res) => {
+ const shortURL = req.params.id
+  res.redirect(`/urls/${shortURL}`) 
+})
+
+app.post("/urls/:id/edit", (req,res) => {
+  const shortURL = req.params.id
+  const longURL ={ longURL: req.body.longURL }
+  urlDatabase[shortURL] = longURL
+  res.redirect("/urls")
 })
 
 // function generateRandomString() {
