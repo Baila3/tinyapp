@@ -1,4 +1,5 @@
 const express = require("express");
+var cookieParser = require('cookie-parser')
 const app = express();
 const PORT = 8000;
 
@@ -12,6 +13,7 @@ const urlDatabase = {
 
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser())
 
 app.get("/", (req,res) => {
   res.send("Hello!");
@@ -35,18 +37,23 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/urls", (req,res) => {
-  const templateVars = { urls: urlDatabase };
+  console.log(req.cookies, "cookie")
+  const templateVars = { urls: urlDatabase, username: req.cookies["username"] };
+  console.log(templateVars)
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  console.log(req.cookies)
+  const templateVars = { username: req.cookies["username"],};
+  res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]["longURL"]  };
+  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]["longURL"],  username: req.cookies["username"],  };
   res.render("urls_show", templateVars);
 });
+
 
 app.post("/urls", (req, res) => {
   console.log(req.body.longURL);  
@@ -79,6 +86,33 @@ app.post("/urls/:id/edit", (req,res) => {
   urlDatabase[shortURL] = longURL
   res.redirect("/urls")
 })
+
+// app.post("/urls/login", (req,res) => {
+//   const username = req.body.username
+//   res.cookie("username", username)
+//   res.redirect("/urls")
+// })
+
+app.post('/login', (req,res) => {
+  const username = req.body.username
+  // const name = req.cookies.username.trim()
+  if (!username){
+    // enableAlert('Login failed')
+    return res.redirect('/urls')
+  }
+  res.cookie("username", username)
+  // enableAlert('Loggin Success');
+  console.log(username, "Logged in as:");
+  res.redirect('/urls')
+});
+
+app.post('/logout', (req,res) => {
+  res.clearCookie('username')
+  // enableAlert('Logged out')
+  res.redirect('/urls')
+})
+
+
 
 // function generateRandomString() {
 //   return  Math.random().toString(36).slice(2,8);
