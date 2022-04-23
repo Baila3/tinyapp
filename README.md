@@ -4,9 +4,9 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 ## Final Product
 
-!["sign up page"](docs/Screen Shot 2022-04-23 at 4.16.36 PM.png)
-!["urls page"](docs/Screen Shot 2022-04-23 at 4.15.58 PM.png)
-!["login page"](docs/Screen Shot 2022-04-23 at 4.16.46 PM.png)
+!["sign up page"](https://github.com/Baila3/tinyapp/blob/main/docs/Screen%20Shot%202022-04-23%20at%204.16.36%20PM.png)
+!["urls page"](https://github.com/Baila3/tinyapp/blob/main/docs/Screen%20Shot%202022-04-23%20at%204.15.58%20PM.png)
+!["login page"](https://github.com/Baila3/tinyapp/blob/main/docs/Screen%20Shot%202022-04-23%20at%204.16.46%20PM.png)
 ## Dependencies
 
 - Node.js
