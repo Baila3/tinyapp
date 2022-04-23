@@ -1,7 +1,13 @@
 const express = require("express");
 var cookieParser = require('cookie-parser')
+const bcrypt = require('bcryptjs');
+
+const bodyParser = require("body-parser");
 const app = express();
 const PORT = 8000;
+const salt = bcrypt.genSaltSync(10)
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser())
 
 
 app.set("view engine", "ejs");
@@ -15,22 +21,18 @@ const users = {
   "userRandomID": {
     id: "userRandomID", 
     email: "user@example.com", 
-    password: "purple-monkey-dinosaur"
+    password: bcrypt.hashSync("purple-monkey-dinosaur", salt)
   },
  "user2RandomID": {
     id: "user2RandomID", 
     email: "user2@example.com", 
-    password: "dishwasher-funk"
+    password: bcrypt.hashSync("dishwasher-funk", salt)
   }
 }
 // const userId = generateRandomString()
 //   const user = {id: userId, email: mail, password: pass}
 //   users[userId] = user
 
-
-const bodyParser = require("body-parser");
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(cookieParser())
 
 app.get("/", (req,res) => {
   res.send("Hello!");
@@ -88,8 +90,8 @@ app.get("/urls", (req,res) => {
   // let userId = users[req.cookies.userId] 
   // user = user?.email != undefined ? user : { id: null, email: null, password: null}
   const user = users[userId]
-  console.log("user:", user)
-  console.log(urlDatabase)
+  // console.log("user:", user)
+  // console.log(urlDatabase)
   // if (!user) {
   //   return res.render("/register")
   // }
@@ -208,13 +210,11 @@ app.post('/login', (req,res) => {
   //   // enableAlert('Login failed')
   //   return res.send(403)
   // }
-  
- 
   const findEmail = findUserEmail (email) 
   if (findEmail["email"] !== email) { 
     return res.send(403)
   }
-  if (findEmail["password"] !== password) { 
+  if (!bcrypt.compareSync(password, findEmail.password)) { 
     return res.send(403)
   }
   const ID = findEmail.id
@@ -236,6 +236,7 @@ app.post('/login', (req,res) => {
 });
 
 app.get('/logout', (req,res) => {
+  const userId = req.cookies.userId
   res.clearCookie('userId')
   // enableAlert('Logged out')
   return res.redirect('/register')
@@ -260,7 +261,7 @@ app.post("/register", (req,res) => {
     return res.send(400)
   }
   const userId = generateRandomString()
-  const user = {id: userId, email: mail, password: pass}
+  const user = {id: userId, email: mail, password:  bcrypt.hashSync(pass, salt)}
   // console.log(users)
   const findEmail = findUserEmail(mail) 
   console.log(findEmail)
@@ -268,6 +269,8 @@ app.post("/register", (req,res) => {
     return  res.send(400)
    }
    users[userId] = user
+   
+   
   res.cookie("userId", userId)
   res.redirect("/urls")
   
