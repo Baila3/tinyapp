@@ -46,37 +46,12 @@ const users = {
 
 
 
-// app.get("/", (req,res) => {
-//   res.send("Hello!");
-// });
-
-
-// function urlsForUser(id) {
-//  let arr = []
-//  for (const url in urlDatabase )
-//   if (id === urlDatabase[url]["userID"]) {
-//     arr.push(url)
-//   }
-//   return arr
-// };
-
 
 
 
 function generateRandomString() {
   return  Math.random().toString(36).slice(2,8);
 };
-
-// function findUserEmail(email, database) {
-//   console.log(email)
-//   for (const user in database){
-//     // console.log(users[user], "obj")
-//     if (database[user].email === email) {
-//       return database[user]
-//     }
-//   }
-//   return false
-// }
 
 // app testing
 app.listen(PORT, () => {

@@ -1,3 +1,4 @@
+// finding user by email function
 function findUserEmail(email, database) {
   for (const user in database){
     if (database[user].email === email) {
@@ -6,5 +7,5 @@ function findUserEmail(email, database) {
   }
   return false
 }
-
+//exporting function
 module.exports = {findUserEmail}
