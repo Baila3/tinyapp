@@ -22,4 +22,5 @@ The login page where users can log in if they've previously created an account
 ## Getting Started
 
 - Install all dependencies (using the `npm install` command).
-- Run the development web server using the `node express_server.js` command.
+- Run the development web server using the `node express_server.js` or `npm start`.
+- 
