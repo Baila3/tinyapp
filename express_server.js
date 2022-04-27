@@ -47,8 +47,6 @@ const users = {
 
 
 
-
-
 function generateRandomString() {
   return  Math.random().toString(36).slice(2,8);
 };
@@ -66,11 +64,14 @@ app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
+app.get("/", (req, res) => {
+  res.redirect("/login")
+});
+
 
 // URl page route
 app.get("/urls", (req,res) => {
   const userId = req.session.user_id
-
   if (userId === null || userId === undefined) {
     return res.send("users should <a href=/login> login </a> first ")
   }
@@ -82,7 +83,6 @@ app.get("/urls", (req,res) => {
 
 app.get("/urls/new", (req, res) => {
   const userId = req.session.user_id
-
   if (userId === null || userId === undefined) {
     return res.redirect("/login")
   }
@@ -95,7 +95,6 @@ app.get("/urls/new", (req, res) => {
 // creation url route
 app.get("/urls/:shortURL", (req, res) => {
   const userId = req.session.user_id
-
   if (userId === null || userId === undefined) {
     return res.send("users should <a href=/login> login </a> first ")
   }
@@ -116,17 +115,9 @@ app.post("/urls", (req, res) => {
 // short url link 
 app.get("/u/:shortURL", (req, res) => {
   let URL = urlDatabase[req.params.shortURL];
-
   if (URL === undefined) {
     return res.send("Link is invalid")
   }
-
-  const userId = req.session.user_id
-
-  if (userId === null || userId === undefined) {
-    return res.send("users should <a href=/login> login </a> first ")
-  }
-
   res.redirect(URL.longURL);
 });
 
@@ -135,11 +126,9 @@ app.post("/urls/:shortURL/delete",(req, res) => {
   const userId = req.session.user_id
   const shortURL = req.params.shortURL
   const urlToDelete = urlDatabase[shortURL]
-
   if (urlToDelete["userID"]!== userId) {
     return res.send(400)
   }
-
   delete urlDatabase[shortURL]
   res.redirect(`/urls`) 
 })
@@ -147,7 +136,6 @@ app.post("/urls/:shortURL/delete",(req, res) => {
 // edit url route
 app.get("/urls/:id/edit", (req,res) => {
   const shortURL = req.params.id
-
   res.redirect(`/urls/${shortURL}`) 
 })
 
@@ -157,11 +145,9 @@ app.post("/urls/:id/edit", (req,res) => {
   const shortURL = req.params.id
   const longURL = req.body.longURL 
   const urlToDelete = urlDatabase[shortURL]
-
  if (urlToDelete["userID"] !== userId) {
   return res.send(400)
 }
-
   urlDatabase[shortURL]["longURL"] = longURL
   res.redirect("/urls")
 })
@@ -169,7 +155,6 @@ app.post("/urls/:id/edit", (req,res) => {
 // login route
 app.get('/login', (req,res) => {
   const userId = req.session.user_id
-
   if (userId) {
     return res.redirect("/urls")
   }
@@ -181,20 +166,14 @@ app.get('/login', (req,res) => {
 // login page
 app.post('/login', (req,res) => {
   const {email, password} = req.body
- 
   const findEmail = helpers.findUserEmail (email, users) 
-
   if (findEmail["email"] !== email) { 
     return res.send(403)
   }
-
   if (!bcrypt.compareSync(password, findEmail.password)) { 
     return res.send(403)
   }
-
   const ID = findEmail.id
-  
-  
   req.session.user_id = ID
   res.redirect("/urls")
 });
@@ -208,7 +187,6 @@ app.get('/logout', (req,res) => {
 // register route
 app.get('/register', (req,res) => {
 const userId = req.session.user_id
-
 if (userId) {
   return res.redirect("/urls")
 }
@@ -221,24 +199,17 @@ res.render('urls_register', templateVars)
 app.post("/register", (req,res) => {
   const mail = req.body.email
   const pass = req.body.password
-
   if (!mail || !pass) {
     return res.send(400)
   }
-
   const userId = generateRandomString()
   const user = {id: userId, email: mail, password:  bcrypt.hashSync(pass, salt)}
-  
   const findEmail = helpers.findUserEmail(mail, users) 
-
   if (findEmail["email"] === mail) {
     return  res.send(400)
    }
-   
    users[userId] = user
-  
    const ID = userId
- 
   req.session.user_id = ID
   res.redirect("/urls")
   
